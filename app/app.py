@@ -19,9 +19,12 @@ def list_news():
 @app.route("/news", methods=["POST"])
 def create_news():
     data = request.json
+    # Add the new to the array
+    news.append({"id": next_id, **data})
     return jsonify(data), 201
 
-# Expected: Add a new element to the list
+
+# Expected: update an element in the list
 @app.route("/news/<int:item_id>", methods=["PUT"])
 def update_news(item_id: int):
     item = news[item_id]
