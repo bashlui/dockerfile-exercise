@@ -8,7 +8,15 @@ next_id = 1
 
 @app.route("/", methods=["GET"])
 def index():
-    pass
+    return jsonify({
+        "message": "Welcome to the News API",
+        "endpoints": {
+            "GET /news": "List all news",
+            "POST /news": "Create news",
+            "PUT /news/<id>": "Update news",
+            "DELETE /news/<id>": "Delete news"
+        }
+    })
 
 # Expected: list with only one element
 @app.route("/news", methods=["GET"])
@@ -18,11 +26,13 @@ def list_news():
 # Expected: it will echo the same data submitted in the body
 @app.route("/news", methods=["POST"])
 def create_news():
+    global next_id 
     data = request.json
-    # Add the new to the array
-    news.append({"id": next_id, **data})
-    return jsonify(data), 201
-
+    # Create the new news item with current next_id
+    new_item = {"id": next_id, **data}
+    news.append(new_item)
+    next_id += 1  # Increment for next item
+    return jsonify(new_item), 201  # Return the created item, not just the input data
 
 # Expected: update an element in the list
 @app.route("/news/<int:item_id>", methods=["PUT"])
@@ -33,6 +43,7 @@ def update_news(item_id: int):
         if key in data:
             item[key] = data[key]
     return jsonify(item)
+
 
 # Expected: delete an element bia id.
 @app.route("/news/<int:item_id>", methods=["DELETE"])
